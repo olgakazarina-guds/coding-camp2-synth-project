@@ -49,3 +49,41 @@ The application models sound synthesis strictly following our design UML class d
 │               Envelope               │             │ SineOscillator  │ │SquareOscillator│ │ SawOscillator │
 │       Shapes volume over time        │             └─────────────────┘ └───────────────┘ └───────────────┘
 └──────────────────────────────────────┘
+
+### Key OOP Relationships
+1. **Inheritance (`is-a` / ▷)**:
+   - `Oscillator` is an abstract base class defining `virtual float generateSample() = 0`.
+   - `SineOscillator`, `SquareOscillator`, and `SawOscillator` inherit from `Oscillator` and implement specific DSP mathematical algorithms.
+2. **Composition (`has-a` / ◆)**:
+   - `Synth` composes multiple `Voice` instances and `Oscillator` pointers.
+   - Each `Voice` composes an `Envelope` to shape the note's ADSR amplitude over time.
+3. **Association (`uses` / ⇢)**:
+   - `Visualizer` reads audio buffer data from `Synth` via `getBuffer()` to render real-time waveforms.
+
+---
+
+## 🤝 Team Interface Contract
+
+| Component | Responsibility | Agreed Interface / Method | Contract Notes |
+| :--- | :--- | :--- | :--- |
+| **Oscillator Base** | Mohammed | `float generateSample()` | Returns float sample in `[-1.0, 1.0]` |
+| **Pitch Control** | Mohammed | `void setFrequency(float hz)` | Updates oscillator pitch |
+| **Voice Binding** | Olga | `Voice::setOscillator(Oscillator*)` | Voice holds base-class pointer |
+| **Audio Buffer Hook** | Olga | `const std::vector<float>& getBuffer()` | Returns `[-1.0, 1.0]` buffer for Visualizer |
+| **Visualizer Hook** | Mohammed | `Visualizer::setSynth(Synth*)` | Visualizer reads from Synth pointer |
+| **Sample Rate** | Shared | `44100` Hz | Unified global sample rate |
+
+---
+
+## 🎹 Controls
+
+- **Keys `[A, S, D, F, G, H, J, K]`**: Play C4 through C5 musical notes.
+- **Keys `[1, 2, 3]`**: Switch waveform type (`1` = Sine, `2` = Square, `3` = Saw).
+
+---
+
+## 🚀 How to Build & Run
+
+1. Clone or place this folder in openFrameworks `apps/myApps/`.
+2. Generate project files with the openFrameworks **Project Generator**.
+3. Build & run in Xcode (macOS) or Visual Studio 2022 (Windows).
