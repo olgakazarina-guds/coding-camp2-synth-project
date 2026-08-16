@@ -2,6 +2,7 @@
 // Responsibility: Olga (Left UML Side)
 #pragma once
 #include "ofMain.h"
+#include "WaveType.h"
 #include "Voice.h"
 #include "Oscillator.h"
 #include <vector>
@@ -20,8 +21,10 @@ public:
     void noteOn(int noteKey, float frequency);
     void noteOff(int noteKey);
 
-    // Waveform selector (0 = Sine, 1 = Square, 2 = Saw)
-    void setWaveformType(int typeIndex);
+    // Waveform selector using Mohammed's WaveType enum
+    void setWaveType(WaveType type);
+    WaveType getWaveType() const;
+
     void setADSR(float a, float d, float s, float r);
     void setMasterVolume(float vol) { masterVolume = ofClamp(vol, 0.0f, 1.0f); }
 
@@ -39,7 +42,7 @@ private:
 
     // Composition: Synth HAS-A concrete Oscillator instances
     std::vector<std::unique_ptr<Oscillator>> oscillatorPool;
-    int currentWaveformType;
+    WaveType currentWaveType;
 
     // Audio buffer read by Visualizer via getBuffer()
     std::vector<float> monoBuffer;
