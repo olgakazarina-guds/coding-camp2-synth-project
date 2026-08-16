@@ -3,7 +3,7 @@
 #include "Synth.h"
 
 Synth::Synth()
-    : sampleRate(44100), bufferSize(256), masterVolume(0.8f), currentWaveformType(0) {
+    : sampleRate(44100), bufferSize(256), masterVolume(0.8f), currentWaveType(SINE) {
 }
 
 Synth::~Synth() {}
@@ -13,7 +13,7 @@ void Synth::setup(int sr, int bufSize, int polyphony) {
     bufferSize = bufSize;
     monoBuffer.resize(bufferSize, 0.0f);
 
-    // Instantiate Concrete Oscillators (Sine, Square, Saw)
+    // Instantiate Concrete Oscillators (SINE = 0, SQUARE = 1, SAW = 2)
     oscillatorPool.clear();
     oscillatorPool.push_back(std::make_unique<SineOscillator>(sampleRate));
     oscillatorPool.push_back(std::make_unique<SquareOscillator>(sampleRate));
@@ -23,19 +23,24 @@ void Synth::setup(int sr, int bufSize, int polyphony) {
     voices.clear();
     for (int i = 0; i < polyphony; i++) {
         Voice v(sampleRate);
-        v.setOscillator(oscillatorPool[currentWaveformType].get());
+        v.setOscillator(oscillatorPool[static_cast<int>(currentWaveType)].get());
         voices.push_back(v);
     }
 }
 
-void Synth::setWaveformType(int typeIndex) {
+void Synth::setWaveType(WaveType type) {
+    int typeIndex = static_cast<int>(type);
     if (typeIndex < 0 || typeIndex >= (int)oscillatorPool.size()) return;
-    currentWaveformType = typeIndex;
+    currentWaveType = type;
 
     // Update all voices to point to the selected oscillator type
     for (auto & voice : voices) {
-        voice.setOscillator(oscillatorPool[currentWaveformType].get());
+        voice.setOscillator(oscillatorPool[typeIndex].get());
     }
+}
+
+WaveType Synth::getWaveType() const {
+    return currentWaveType;
 }
 
 void Synth::setADSR(float a, float d, float s, float r) {
@@ -54,7 +59,7 @@ void Synth::noteOn(int noteKey, float frequency) {
         }
     }
     if (targetVoice == nullptr && !voices.empty()) {
-        targetVoice = &voices[0]; // fallback
+        targetVoice = &voices[0]; // fallback voice stealing
     }
 
     if (targetVoice != nullptr) {
