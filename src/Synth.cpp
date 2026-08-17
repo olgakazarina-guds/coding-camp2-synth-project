@@ -6,7 +6,7 @@
 #include "SawOscillator.h"
 
 Synth::Synth()
-    : sampleRate(44100), bufferSize(256), masterVolume(0.8f), currentWaveType(WaveType::SINE) {
+    : sampleRate(44100), bufferSize(256), masterVolume(0.8f), currentWaveType(SINE) {
 }
 
 Synth::~Synth() {}
