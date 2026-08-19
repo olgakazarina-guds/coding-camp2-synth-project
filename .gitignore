@@ -1,0 +1,24 @@
+# ---- macOS junk ----
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ---- IDE settings (don't commit these!) ----
+.vscode/
+.vs/
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+
+# ---- openFrameworks / build artifacts ----
+bin/
+obj/
+*.o
+*.app
+build/
+
+# ---- misc ----
+*.log
+*.tmp

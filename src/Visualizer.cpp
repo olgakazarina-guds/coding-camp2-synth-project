@@ -3,32 +3,29 @@
 Visualizer::Visualizer() : fftSize(256){}
 
 void Visualizer::setup(int size){
-
     fftSize = size;
     spectrum.assign(fftSize / 2, 0.0f);
-
 }
 
 void Visualizer::update(const std::vector<float>& samples){
     waveform = samples;
     computeSpectrum();
 }
+
 void Visualizer::computeSpectrum(){
     if ((int)waveform.size() < fftSize) return;
 
-    // naive Discrete Fourier Transform over the first ffsize samples.
-    //(Reachable for teaching; a real synth would use ofxFft / kissFFT.)
+    // naive Discrete Fourier Transform over the first fftSize samples.
+    // (Readable for teaching; a real synth would use ofxFft / kissFFT.)
     for (int k = 0; k < fftSize / 2; ++k){
         float re = 0.0f, im = 0.0f;
         for (int n = 0; n < fftSize; n++){
             float angle = TWO_PI * k * n / fftSize;
             re += waveform[n] * cos(angle);
             im -= waveform[n] * sin(angle);
-
         }
         spectrum[k] = sqrt(re * re + im * im) / fftSize;
     }
-    
 }
 
 void Visualizer::drawWaveform(float x, float y, float w, float h) const {
@@ -39,9 +36,9 @@ void Visualizer::drawWaveform(float x, float y, float w, float h) const {
     ofPolyline line;
     if (!waveform.empty()){
         for (size_t i = 0; i < waveform.size(); ++i){
-            float px = x + ofMap(i, 0, waveform.size() -1, 0, w);
+            float px = x + ofMap(i, 0, waveform.size() - 1, 0, w);
             float py = y + h / 2 + waveform[i] * (h / 2);
-            line.addVertex(px, py); 
+            line.addVertex(px, py);
         }
     }
     line.draw();
